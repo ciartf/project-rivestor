@@ -1,9 +1,14 @@
 // defining a function which calculates euclidean distance between two data points
 double euclideanDistance(int index) {
+  Serial.println("Euclidean result");
   double distance = 0.0;
   for (int x = 0; x < dataLength; x++) {
-    distance += sq(dataTest[x] - dataTrain[index][x]);
+    distance += pow((dataTest[x] - dataTrain[index][x]), 2);
+    Serial.println(pow((dataTest[x] - dataTrain[index][x]), 2));
   }
+  Serial.print(distance);
+  Serial.print(" ");
+  Serial.println(sqrt(distance));
   return sqrt(distance);
 }
 
@@ -24,11 +29,20 @@ String calculateKNN(int k) {
     // end of STEP 3.1
   }
 
+  Serial.println("Step 1 result");
+  for (int i = 0; i < dataSize; i++) {
+    for (int j = 0; j < 2; j++) {
+      Serial.print(distances[i][j]);
+      Serial.print(" ");
+    }
+    Serial.println();
+  }
+
   // start of STEP 3.2
   // sorting them on the basis of distance
   for (int x = 0; x < dataSize; x++) {
     int y = x;
-    while (y > 0 && distances[y][1] > distances[y - 1][1]) {
+    while (y > 0 && distances[y][1] < distances[y - 1][1]) {
       double temp[2];
       temp[0] = distances[y][0];
       temp[1] = distances[y][1];
@@ -41,6 +55,15 @@ String calculateKNN(int k) {
   }
   // end of STEP 3.2
 
+  Serial.println("Step 2 result");
+  for (int i = 0; i < dataSize; i++) {
+    for (int j = 0; j < 2; j++) {
+      Serial.print(distances[i][j]);
+      Serial.print(" ");
+    }
+    Serial.println();
+  }
+
   // start of STEP 3.3
   // extracting top k neighbors
   double neighbors[k][2];
@@ -49,6 +72,15 @@ String calculateKNN(int k) {
     neighbors[x][1] = distances[x][1];
   }
   // end of STEP 3.3
+
+  Serial.println("Step 3 result");
+  for (int i = 0; i < k; i++) {
+    for (int j = 0; j < 2; j++) {
+      Serial.print(neighbors[i][j]);
+      Serial.print(" ");
+    }
+    Serial.println();
+  }
 
   // start of STEP 3.4
   // calculating the most freq class in the neighbors
@@ -65,6 +97,11 @@ String calculateKNN(int k) {
     }
   }
   // end of STEP 3.4
+
+  Serial.println("Step 4 result");
+  for (int i = 0; i < k; i++) {
+    Serial.println(classVotes[i]);
+  }
 
   // start of STEP 3.5
   if (classVotes[0] > classVotes[1]) {
