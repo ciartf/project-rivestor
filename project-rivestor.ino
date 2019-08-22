@@ -3,12 +3,16 @@
 #define S2 6
 #define S3 7
 #define sensorOut 8
+#define LED 9
 
 int frequency = 0;
 const int dataSize = 60;
 const int dataLength = 3;
 const int classLength = 2;
-int dataTest[dataLength] = {0, 0, 0};
+// default data to test "yes" class
+//int dataTest[dataLength] = {244, 234, 28};
+// default data to test "no" class
+int dataTest[dataLength] = {209, 248, 175};
 int dataTrain[dataSize][dataLength] = {
   {172, 242, 1},
   {155, 232, 1},
@@ -27,7 +31,7 @@ int dataTrain[dataSize][dataLength] = {
   {219, 250, 177},
   {172, 242, 1},
   {123, 212, 20},
-  {171, 216, 16},
+  {155,216,16},
   {176, 226, 5},
   {94, 226, 5},
   {111, 220, 12},
@@ -50,26 +54,26 @@ int dataTrain[dataSize][dataLength] = {
   {100, 240, 32},
   {121, 236, 36},
   {188, 240, 32},
-  {248, 232, 29},
-  {219, 245, 31},
-  {221, 249, 28},
-  {243, 216, 20},
-  {202, 247, 26},
-  {240, 235, 32},
+  {248,205,29},
+  {245,201,30},
+  {238,200,25},
+  {243,206,20},
+  {247,203,26},
+  {250,206,32},
   {241, 209, 31},
-  {244, 234, 28},
-  {245, 230, 27},
+  {244,201,28},
+  {245,207,27},
   {236, 209, 19},
-  {240, 235, 15},
-  {184, 224, 31},
-  {188, 228, 27},
-  {200, 224, 31},
-  {181, 223, 32},
-  {233, 238, 17},
-  {237, 226, 18},
-  {236, 203, 19},
-  {236, 231, 19},
-  {232, 226, 23}
+  {240,202,25},
+  {250,204,31},
+  {243,195,27},
+  {230,197,18},
+  {248,193,25},
+  {245,208,23},
+  {242,201,18},
+  {245,203,19},
+  {248,206,19},
+  {252,209,23}
 };
 String dataClass[dataSize] = {
   "no",
@@ -134,28 +138,36 @@ String dataClass[dataSize] = {
   "yes"
 };
 
-
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
 
   // setup color sensor
   setupTCS3200();
+  setupLED();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
+  sense();
+  process();
+}
+
+void process() {
+  // determine class of data Test
+  String result = calculateKNN(7);
+  if (result == "yes") {
+    ledON();
+  } else {
+    ledOFF();
+  }
+  Serial.print("Final result= ");
+  Serial.println(result);
+}
+
+void sense() {
   // read color in RGB format
   runTCS3200();
-  Serial.print("RGB= ");
-  Serial.print(dataTest[0]);
-  Serial.print(",");
-  Serial.print(dataTest[1]);
-  Serial.print(",");
-  Serial.println(dataTest[2]);
-
-  // determine class of data Test
-  Serial.print("Final result= ");
-  Serial.println(calculateKNN(3));
+  delay(500);
 }
